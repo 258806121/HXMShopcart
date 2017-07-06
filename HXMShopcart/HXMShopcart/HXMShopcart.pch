@@ -1,0 +1,42 @@
+//
+//  HXMShopcart.pch
+//  HXMShopcart
+//
+//  Created by HXM on 2017/7/5.
+//  Copyright © 2017年 HXM. All rights reserved.
+//
+
+#ifndef HXMShopcart_pch
+#define HXMShopcart_pch
+
+/** controller*/
+#import "ViewController.h"
+#import "HXMShopcartController.h"
+
+/** View*/
+#import "HXMShopcartTBVCell.h"
+#import "HXMShopcartCountView.h"
+#import "HXMShopcartHeaderView.h"
+#import "HXMShopcartBottomView.h"
+
+/** delegate*/
+#import "HXMShopcartTBVProxy.h"
+
+/** model*/
+#import "HXMShopcartShopModel.h"
+#import "HXMShopcartGoodsModel.h"
+
+/** utils*/
+#import "HXMShopcartFormat.h"
+
+/** vender*/
+#import "IQKeyboardManager.h"
+#import "Masonry.h"
+#import "UIImageView+WebCache.h"
+#import "MJExtension.h"
+
+/** system*/
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+#endif /* HXMShopcart_pch */
