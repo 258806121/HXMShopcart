@@ -12,7 +12,7 @@
 
 @required
 /**
- 请求购物车列表成功之后的回调方法，将装有Model的数组回调到控制器；控制器将其赋给TableView的代理类HXMShopcartTBVProxy并刷新TableView
+ 请求购物车列表成功之后的回调方法，将装有Model的数组回调到控制器;并刷新TableView
  
  @param dataArray 数组
  */
@@ -90,7 +90,7 @@
 - (void)deleteGoodsAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
- 删除选中的商品 (bottomView的删除方法)
+ 删除选中的商品
  */
 - (void)beginToDeleteSelectedGoods;
 

@@ -22,7 +22,6 @@
 		288A625A1F0E070900C1C3CF /* HXMShopcartFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 288A62591F0E070900C1C3CF /* HXMShopcartFormat.m */; };
 		28EE985E1F0CDD6300350E76 /* HXMShopcartHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28EE985D1F0CDD6300350E76 /* HXMShopcartHeaderView.m */; };
 		28EE98611F0CDFC100350E76 /* HXMShopcartBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28EE98601F0CDFC100350E76 /* HXMShopcartBottomView.m */; };
-		28EE98661F0CE6A200350E76 /* HXMShopcartTBVProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 28EE98651F0CE6A200350E76 /* HXMShopcartTBVProxy.m */; };
 		F9D8464B5E15F47EC9BA0696 /* libPods-HXMShopcart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB459C50827E20F08220BBEE /* libPods-HXMShopcart.a */; };
 /* End PBXBuildFile section */
 
@@ -55,8 +54,6 @@
 		28EE985D1F0CDD6300350E76 /* HXMShopcartHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HXMShopcartHeaderView.m; sourceTree = "<group>"; };
 		28EE985F1F0CDFC100350E76 /* HXMShopcartBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HXMShopcartBottomView.h; sourceTree = "<group>"; };
 		28EE98601F0CDFC100350E76 /* HXMShopcartBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HXMShopcartBottomView.m; sourceTree = "<group>"; };
-		28EE98641F0CE6A200350E76 /* HXMShopcartTBVProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HXMShopcartTBVProxy.h; sourceTree = "<group>"; };
-		28EE98651F0CE6A200350E76 /* HXMShopcartTBVProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HXMShopcartTBVProxy.m; sourceTree = "<group>"; };
 		42A58FB1A6ACF62BB143B7DE /* Pods-HXMShopcart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HXMShopcart.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HXMShopcart/Pods-HXMShopcart.debug.xcconfig"; sourceTree = "<group>"; };
 		6F0B88F3720D118B078031BA /* Pods-HXMShopcart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HXMShopcart.release.xcconfig"; path = "Pods/Target Support Files/Pods-HXMShopcart/Pods-HXMShopcart.release.xcconfig"; sourceTree = "<group>"; };
 		BB459C50827E20F08220BBEE /* libPods-HXMShopcart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-HXMShopcart.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,7 +119,6 @@
 			children = (
 				2878AFD51F0C721F001BAA15 /* shopcart.plist */,
 				2878AFE31F0C87E7001BAA15 /* HXMShopcart.pch */,
-				28EE98621F0CE66400350E76 /* TableViewProxy */,
 				28EE98631F0CE66400350E76 /* Utils */,
 				2878AFD21F0C7144001BAA15 /* Controller */,
 				2878AFD31F0C7144001BAA15 /* Model */,
@@ -164,15 +160,6 @@
 				28EE98601F0CDFC100350E76 /* HXMShopcartBottomView.m */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		28EE98621F0CE66400350E76 /* TableViewProxy */ = {
-			isa = PBXGroup;
-			children = (
-				28EE98641F0CE6A200350E76 /* HXMShopcartTBVProxy.h */,
-				28EE98651F0CE6A200350E76 /* HXMShopcartTBVProxy.m */,
-			);
-			path = TableViewProxy;
 			sourceTree = "<group>";
 		};
 		28EE98631F0CE66400350E76 /* Utils */ = {
@@ -328,7 +315,6 @@
 				288A625A1F0E070900C1C3CF /* HXMShopcartFormat.m in Sources */,
 				2878AFDC1F0C755C001BAA15 /* HXMShopcartShopModel.m in Sources */,
 				2878AFC21F0C70FB001BAA15 /* ViewController.m in Sources */,
-				28EE98661F0CE6A200350E76 /* HXMShopcartTBVProxy.m in Sources */,
 				2878AFE21F0C859E001BAA15 /* HXMShopcartTBVCell.m in Sources */,
 				28EE98611F0CDFC100350E76 /* HXMShopcartBottomView.m in Sources */,
 				2878AFBF1F0C70FB001BAA15 /* AppDelegate.m in Sources */,

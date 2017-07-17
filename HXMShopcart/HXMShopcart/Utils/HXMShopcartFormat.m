@@ -99,8 +99,8 @@
     } else if (count > goodsModel.goodsStocks) {
         count = goodsModel.goodsStocks;
     }
-    
-    //根据请求结果决定是否改变数据
+#warning 网络请求!!!!!!!!!!!!!!!
+    // 根据请求结果决定是否改变数据
     goodsModel.goodsNum = count;
     
     [self.delegate shopcartFormatAccountForTotalPrice:[self accountTotalPrice]

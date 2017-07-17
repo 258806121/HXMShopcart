@@ -9,18 +9,22 @@
 #import "HXMShopcartController.h"
 
 @interface HXMShopcartController ()<
-HXMShopcartFormatDelegate>
+HXMShopcartFormatDelegate,
+UITableViewDelegate,
+UITableViewDataSource,
+DZNEmptyDataSetSource,
+DZNEmptyDataSetDelegate>
 
 /**< 购物车列表 */
 @property (nonatomic, strong) UITableView *tableView;
 /**< 购物车底部视图 */
 @property (nonatomic, strong) HXMShopcartBottomView *shopcartBottomView;
-/**< tableView代理 */
-@property (nonatomic, strong) HXMShopcartTBVProxy *shopcartTableViewProxy;
 /**< 负责购物车逻辑处理 */
 @property (nonatomic, strong) HXMShopcartFormat *shopcartFormat;
 /**< 编辑按钮 */
 @property (nonatomic, strong) UIButton *btnEdited;
+/**< 购物车数据源 */
+@property (nonatomic, strong) NSMutableArray *arrShopModels;
 
 @end
 
@@ -91,8 +95,10 @@ HXMShopcartFormatDelegate>
         [_tableView registerClass:[HXMShopcartHeaderView class] forHeaderFooterViewReuseIdentifier:@"HXMShopcartHeaderView"];
         
         // 代理人
-        _tableView.delegate = self.shopcartTableViewProxy;
-        _tableView.dataSource = self.shopcartTableViewProxy;
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.emptyDataSetSource = self;
+        _tableView.emptyDataSetDelegate = self;
         
         // 行高
         _tableView.rowHeight = 140;
@@ -113,50 +119,6 @@ HXMShopcartFormatDelegate>
         _shopcartFormat.delegate = self;
     }
     return _shopcartFormat;
-}
-
-/**
- tableView代理
- */
-- (HXMShopcartTBVProxy *)shopcartTableViewProxy
-{
-    if (_shopcartTableViewProxy == nil) {
-        
-        _shopcartTableViewProxy = [[HXMShopcartTBVProxy alloc] init];
-        
-        __weak typeof(self) ws = self;
-        
-        // 选中商品
-        _shopcartTableViewProxy.shopcartProxyGoodsSelectedBlock = ^(BOOL isSelected, NSIndexPath *indexPath){
-            [ws.shopcartFormat selectGoodsAtIndexPath:indexPath isSelected:isSelected];
-        };
-        
-        // 选中品牌
-        _shopcartTableViewProxy.shopcartProxyShopSelectedBlock = ^(BOOL isSelected, NSInteger section){
-            [ws.shopcartFormat selectShopAtSection:section isSelected:isSelected];
-        };
-        
-        // 改变购买数量
-        _shopcartTableViewProxy.shopcartProxyChangeCountBlock = ^(NSInteger count, NSIndexPath *indexPath){
-            [ws.shopcartFormat changeCountAtIndexPath:indexPath count:count];
-        };
-        
-        // 左滑删除
-        _shopcartTableViewProxy.shopcartProxyDeletedBlock = ^(NSIndexPath *indexPath){
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"确认要删除这个宝贝吗？" preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-            [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [ws.shopcartFormat deleteGoodsAtIndexPath:indexPath];
-            }]];
-            [ws presentViewController:alert animated:YES completion:nil];
-        };
-        
-        // 跳转到店铺地址
-        _shopcartTableViewProxy.shopcartProxyShopDetailSelectedBlock = ^(HXMShopcartShopModel *model) {
-            NSLog(@"-----%@",model.shopURL);
-        };
-    }
-    return _shopcartTableViewProxy;
 }
 
 /**
@@ -197,7 +159,6 @@ HXMShopcartFormatDelegate>
     self.navigationItem.rightBarButtonItem = editBarButtonItem;
     
     [self.view addSubview:self.tableView];
-//    _tableView.backgroundColor = [UIColor blueColor];
     [self.view addSubview:self.shopcartBottomView];
 }
 
@@ -228,6 +189,120 @@ HXMShopcartFormatDelegate>
     [self.shopcartBottomView changeShopcartBottomViewWithStatus:self.btnEdited.isSelected];
 }
 
+#pragma mark - DZNEmptyDataSetSource 实现方法
+
+- (CGFloat)verticalOffsetForEmptyDataSet:(UIScrollView *)scrollView
+{
+    return -44;
+}
+
+- (NSAttributedString *)descriptionForEmptyDataSet:(UIScrollView *)scrollView
+{
+    NSString *text = @"购物车空空如也 ^_^";
+    NSMutableParagraphStyle *paragraph = [NSMutableParagraphStyle new];
+    paragraph.lineBreakMode = NSLineBreakByWordWrapping;
+    paragraph.alignment = NSTextAlignmentCenter;
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:15], NSForegroundColorAttributeName: [UIColor lightGrayColor], NSParagraphStyleAttributeName: paragraph};
+    return [[NSAttributedString alloc] initWithString:text attributes:attributes];
+}
+
+#pragma mark - UITableViewDelegate & datasource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.arrShopModels.count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    HXMShopcartShopModel *shopModel = self.arrShopModels[section];
+    NSArray *goodsArray = shopModel.goods;
+    return goodsArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    HXMShopcartTBVCell *cell = [tableView dequeueReusableCellWithIdentifier:@"HXMShopcartTBVCell"];
+    HXMShopcartShopModel *shopModel = self.arrShopModels[indexPath.section];
+    NSArray *goodsArray = shopModel.goods;
+    
+    if (goodsArray.count > indexPath.row) {
+        cell.model = goodsArray[indexPath.row];
+    }
+    
+    __weak typeof(self) ws = self;
+    
+    // 商品选择
+    cell.shopcartCellSelectedBlock = ^(BOOL isSelected){
+        [ws.shopcartFormat selectGoodsAtIndexPath:indexPath isSelected:isSelected];
+    };
+    
+    // 商品数量编辑
+    cell.shopcartCellCountEditBlock = ^(NSInteger count){
+        [ws.shopcartFormat changeCountAtIndexPath:indexPath count:count];
+    };
+    
+    return cell;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    HXMShopcartHeaderView *shopcartHeaderView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:@"HXMShopcartHeaderView"];
+    if (self.arrShopModels.count > section) {
+        HXMShopcartShopModel *shopModel = self.arrShopModels[section];
+        
+        // 配置头视图的 名字 和 选择按钮的状态
+        [shopcartHeaderView configureShopcartHeaderViewWithShopName:shopModel.shopName shopSelect:shopModel.isSelected];
+    }
+    
+    __weak typeof(self) ws = self;
+    
+    // 点击section的全选按钮的block
+    shopcartHeaderView.shopcartHeaderViewBtnAllSeclectedBlock = ^(BOOL isSelected){
+        [ws.shopcartFormat selectShopAtSection:section isSelected:isSelected];
+    };
+    
+    // 点击店铺的block
+    shopcartHeaderView.shopcartBtnShopSelectedBlock = ^{
+        HXMShopcartShopModel *shopModel = ws.arrShopModels[section];
+        NSLog(@"-----%@",shopModel.shopURL);
+    };
+    return shopcartHeaderView;
+}
+
+/**
+ section高度
+ */
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 40;
+}
+
+/**
+ tableView编辑
+ 
+ @param tableView tableView
+ @param indexPath indexPath
+ @return action数组
+ */
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    __weak typeof(self) ws = self;
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"确认要删除这个宝贝吗？" preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [ws.shopcartFormat deleteGoodsAtIndexPath:indexPath];
+        }]];
+        [ws presentViewController:alert animated:YES completion:nil];
+        
+        }
+    ];
+    
+    return @[deleteAction];
+}
+
 #pragma mark - HXMShopcartFormatDelegate
 
 /**
@@ -237,7 +312,7 @@ HXMShopcartFormatDelegate>
  */
 - (void)shopcartFormatGetShopcartListDidSuccessWithArray:(NSMutableArray *)dataArray
 {
-    self.shopcartTableViewProxy.dataArray = dataArray;
+    self.arrShopModels = dataArray;
     [self.tableView reloadData];
 }
 
@@ -282,9 +357,9 @@ HXMShopcartFormatDelegate>
  */
 - (void)shopcartFormatWillDeleteSelectedGoods:(NSArray *)selectedGoods
 {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:[NSString stringWithFormat:@"确认要删除这%ld个宝贝吗？", (unsigned long)selectedGoods.count] preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:[NSString stringWithFormat:@"确认将这%ld个宝贝删除？", (unsigned long)selectedGoods.count] preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self.shopcartFormat deleteSelectedGoods:selectedGoods];
     }]];
     [self presentViewController:alert animated:YES completion:nil];

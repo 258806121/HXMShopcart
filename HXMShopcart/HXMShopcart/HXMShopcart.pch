@@ -19,9 +19,6 @@
 #import "HXMShopcartHeaderView.h"
 #import "HXMShopcartBottomView.h"
 
-/** delegate*/
-#import "HXMShopcartTBVProxy.h"
-
 /** model*/
 #import "HXMShopcartShopModel.h"
 #import "HXMShopcartGoodsModel.h"
@@ -34,6 +31,7 @@
 #import "Masonry.h"
 #import "UIImageView+WebCache.h"
 #import "MJExtension.h"
+#import "UIScrollView+EmptyDataSet.h"
 
 /** system*/
 #import <UIKit/UIKit.h>
